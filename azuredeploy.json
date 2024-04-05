@@ -2,20 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "networkSecurityGroupName": {
-      "type": "string",
-      "defaultValue": "nsg-mgmt",
-      "metadata": {
-        "description": "Network Security Group Name"
-      }
-    },
-    "networkSecurityGroupInboundSrcIP": {
-       "type": "string",
-       "metadata": {
-           "description": "Your source public IP address. Added to the inbound NSG on eth0 (MGMT), to restrict access to the deployment."
-       },
-       "defaultValue": "0.0.0.0/0"
-    },
     "virtualNetworkName": {
       "type": "string",
       "defaultValue": "vnet-FW",
@@ -92,6 +78,7 @@
     },
     "appGatewayDnsName": {
       "type": "string",
+      "defaultValue": "myAppGw",
       "metadata": {
         "description": "App Gateway Public IP DNS Name. Must be globally unique."
       }
@@ -116,32 +103,6 @@
       "metadata": {
         "description": "Internal Load Balancer name - used to identify resource in Azure portal"
       }
-    },
-    "backendSubnetName": {
-      "type": "string",
-      "defaultValue": "backendSubnet",
-      "metadata": {
-        "description": "Subnet for Backend WWW Network"
-      }
-    },
-    "backendSubnetPrefix": {
-      "type": "string",
-      "defaultValue": "192.168.4.0/24",
-      "metadata": {
-        "description": "CIDR for Backend WWW Network"
-      }
-    },
-    "backendVmSize": {
-       "type": "string",
-       "allowedValues": [
-          "Standard_A1",
-          "Standard_D1",
-          "Standard_D1_v2"
-       ],
-       "metadata": {
-          "description": "Azure VM size for backend VMs.  Not all sizes are available in all regions."
-       },
-       "defaultValue": "Standard_D1"
     },
     "firewallModel": {
        "type": "string",
@@ -176,13 +137,7 @@
        "metadata": {
           "description": "Azure VM size for VM-Series"
        },
-       "defaultValue": "Standard_D3"
-    },
-    "MgmtPublicIPAddressName": {
-      "type": "string",
-      "metadata": {
-        "description": "DNS Name prefix of public IP resource for Management interface of VM-Series firewall.  Name must be globally unique."
-      }
+       "defaultValue": "Standard_D3_v2"
     },
     "storageAccountName": {
       "type": "string",
@@ -251,8 +206,7 @@
     "rgname" : "[resourceGroup().name]",
     "LoadBalancerType" : "layer-7",
     "firewallVmCount" : 2,
-    "baseUrl" : "https://raw.githubusercontent.com/PaloAltoNetworks/azure-applicationgateway/master/",
-    "nsgURL" : "[concat(variables('baseUrl'),'/nsg-new.json')]",
+    "baseUrl" : "https://raw.githubusercontent.com/Oxenburg/PaloAlto-azure-applicationgateway/feature/",
     "vnetURL" : "[concat(variables('baseUrl'),'/vnet-', parameters('virtualNetworkNewOrExisting'),'.json')]",
     "publicLBURL" : "[concat(variables('baseUrl'),'/public-lb-', variables('LoadBalancerType'), '.json')]",
     "privateLBURL" : "[concat(variables('baseUrl'),'/private-lb-', parameters('authenticationType'),'.json')]",
@@ -260,32 +214,6 @@
     "vmseriesURL" : "[concat(variables('baseUrl'),'/vmseries.json')]"
   },
   "resources": [
-    {
-      "name": "SetupNSG",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "properties": { 
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('nsgURL')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "location": {
-            "value": "[variables('location')]"
-          },
-          "nsgName": {
-            "value": "[parameters('networkSecurityGroupName')]"
-          },
-          "srcIPInboundNSG": {
-            "value": "[parameters('networkSecurityGroupInboundSrcIP')]"
-          },
-          "virtualNetworkAddressPrefix": {
-            "value": "[parameters('virtualNetworkAddressPrefix')]"
-          }
-        }
-      }
-    },
     {
       "name": "SetupVNET",
       "type": "Microsoft.Resources/deployments",
@@ -300,9 +228,6 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "nsgName": {
-            "value": "[parameters('networkSecurityGroupName')]"
-          },
           "virtualNetworkName": {
             "value": "[parameters('virtualNetworkName')]"
           },
@@ -321,9 +246,6 @@
           "subnetLBName": {
                "value": "[parameters('appGatewaySubnetName')]"
           },
-          "subnetWWWName": {
-               "value": "[parameters('backendSubnetName')]"
-          },
           "subnet0Prefix": {
                "value": "[parameters('mgmtSubnetPrefix')]"
           },
@@ -335,9 +257,6 @@
           },
           "subnetLBPrefix": {
                "value": "[parameters('appGatewaySubnetPrefix')]"
-          },
-          "subnetWWWPrefix": {
-               "value": "[parameters('backendSubnetPrefix')]"
           }
         }
       }
@@ -433,9 +352,6 @@
           "baseUrl": {
                "value": "[variables('baseUrl')]"
           },
-          "MgmtPublicIPAddressName": {
-               "value": "[parameters('MgmtPublicIPAddressName')]"
-          },
           "storageAccountName": {
                "value": "[reference('SettingUpStorageAccount').outputs.sid.value]"
           },
@@ -523,14 +439,8 @@
           "sshKey": {
                "value": "[parameters('sshPublicKey')]"
           },
-          "subnetName": {
-               "value": "[parameters('backendSubnetName')]"
-          },
           "frontendSubnetName": {
                "value": "[parameters('trustedSubnetName')]"
-          },
-          "vmSize": {
-               "value": "[parameters('backendVmSize')]"
           },
           "baseUrl": {
                "value": "[variables('baseUrl')]"
