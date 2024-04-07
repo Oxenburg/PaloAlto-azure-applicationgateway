@@ -5,18 +5,12 @@
     "location": {
       "type": "string"
     },
-    "MgmtPublicIPAddressName": {
-      "type": "string"
-    },
     "publicIPAddressType": {
       "type": "string"
     },
     "baseUrl": {
       "type": "string"
     }
-  },
-  "variables": {
-    "mgmt": "[concat('mgmtIP-', parameters('MgmtPublicIPAddressName'))]"
   },
   "resources": [
     {
@@ -25,10 +19,7 @@
       "name": "[variables('mgmt')]",
       "location": "[parameters('location')]",
       "properties": {
-        "publicIPAllocationMethod": "[parameters('publicIPAddressType')]",
-        "dnsSettings": {
-          "domainNameLabel": "[parameters('MgmtPublicIPAddressName')]"
-        }
+        "publicIPAllocationMethod": "[parameters('publicIPAddressType')]"
       }
     }
   ],
