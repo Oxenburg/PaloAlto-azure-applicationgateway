@@ -109,7 +109,6 @@
         {
             "name": "appGatewayFrontendIP",
             "properties": {
-              "privateIPAllocationMethod": "Dynamic",
               "PublicIPAddress": {
                 "id": "[variables('publicIPRef')]"
               }
