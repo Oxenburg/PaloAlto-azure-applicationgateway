@@ -22,7 +22,7 @@
     },
     "subnetName": {
       "type": "string",
-      "defaultValue": "backendSubnet",
+      "defaultValue": "DMZSubnet",
       "metadata": {
         "description": "This is the name of the backend subnet"
       }
@@ -71,13 +71,6 @@
       "defaultValue": "16.04.0-LTS",
       "metadata": {
         "description": "Image SKU"
-      }
-    },
-    "vmNamePrefix": {
-      "type": "string",
-      "defaultValue": "backendWWW-",
-      "metadata": {
-        "description": "This is the prefix name for the virtual machines"
       }
     },
     "storageAccountName": {
