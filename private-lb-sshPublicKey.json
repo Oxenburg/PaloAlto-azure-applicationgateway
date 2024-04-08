@@ -93,7 +93,7 @@
          "Standard_D1",
          "Standard_D1_v2"
       ],
-      "defaultValue": "Standard_D1",
+      "defaultValue": "Standard_D1_v2",
       "metadata": {
         "description": "This is the allowed list of VM sizes"
       }
