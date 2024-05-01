@@ -275,7 +275,7 @@
       }
     },
     {
-      "name": "[concat('VMSeries-Firewall-VM', copyindex())]",
+      "name": "[concat('VMSeries-Firewall-VM', copyindex(1))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
