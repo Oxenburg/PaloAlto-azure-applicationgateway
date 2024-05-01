@@ -297,7 +297,7 @@
             "value": "[variables('location')]"
           },
           "vmName": {
-            "value": "[concat(parameters('vmName'), copyindex(1))]"
+            "value": "[concat(parameters('vmName'), copyindex())]"
           },
           "availabilitySetName": {
             "value": "[variables('availabilitySetName')]"
