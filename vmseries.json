@@ -233,7 +233,7 @@
       "location": "[resourceGroup().location]"
     },
     {
-      "name": "[concat('SetupNetworkInterfaces', copyindex())]",
+      "name": "[concat('SetupNetworkInterfaces', copyindex(1))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "copy": {
