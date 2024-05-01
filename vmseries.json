@@ -233,7 +233,7 @@
       "location": "[resourceGroup().location]"
     },
     {
-      "name": "[concat('SetupNetworkInterfaces', copyindex(1))]",
+      "name": "[concat('SetupNetworkInterfaces', copyindex())]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "copy": {
@@ -297,7 +297,7 @@
             "value": "[variables('location')]"
           },
           "vmName": {
-            "value": "[concat(parameters('vmName'), copyindex())]"
+            "value": "[concat(parameters('vmName'), copyindex(1))]"
           },
           "availabilitySetName": {
             "value": "[variables('availabilitySetName')]"
