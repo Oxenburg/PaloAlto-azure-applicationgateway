@@ -36,7 +36,7 @@
        "metadata": {
           "description": "Azure VM size for VM-Series"
        },
-       "defaultValue": "Standard_D3"
+       "defaultValue": "Standard_D3_v2"
     },
     "imageSku": {
        "type": "string",
@@ -138,13 +138,6 @@
       "metadata": {
         "artifactsBaseUrl": "",
         "description": "URL to acquire other VM-Series for Azure templates"
-      },
-    },
-    "MgmtPublicIPAddressName": {
-      "type": "string",
-      "defaultValue": "vm-servies-pib-mgmt",
-      "metadata": {
-        "description": "Name of public IP resource for mgmt interface"
       }
     },
     "storageAccountName": {
@@ -228,13 +221,9 @@
     "imageOffer" : "vmseries1",
     "version" : "latest",
     "nicName": "[parameters('vmName')]",
-    "publicIPAddressType": "Dynamic",
-    "nsgSetupURL" : "[concat(parameters('baseUrl'),'/nsg-new.json')]",
-    "SettingUpPublicIPUrl": "[concat(parameters('baseUrl'),'/publicip-new.json')]",
     "setupNICsURL": "[concat(parameters('baseUrl'),'/setupNICS-new.json')]",
     "vmTemplateUrl": "[concat(parameters('baseUrl'), '/virtual-machine-', parameters('authenticationType'),'-bs-', parameters('Bootstrap'), '.json')]",
     "location": "[resourceGroup().location]"
-
   },
   "resources": [
     {
@@ -244,42 +233,9 @@
       "location": "[resourceGroup().location]"
     },
     {
-      "name": "[concat('SettingUpPublicIPs', copyindex())]",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "copy": {
-          "name": "SettingUpPublicIPsLoop",
-          "count": "[parameters('vmCount')]"
-      },
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('SettingUpPublicIPUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "location": {
-            "value": "[variables('location')]"
-          },
-          "MgmtPublicIPAddressName": {
-            "value": "[concat(parameters('MgmtPublicIPAddressName'),copyindex())]"
-          },
-          "publicIPAddressType": {
-            "value": "[variables('publicIPAddressType')]"
-          },
-          "baseUrl": {
-            "value": "[parameters('baseUrl')]"
-          }
-        }
-      }
-    },
-    {
       "name": "[concat('SetupNetworkInterfaces', copyindex())]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
-      "dependsOn": [
-        "SettingUpPublicIPsLoop"
-      ],
       "copy": {
           "name": "NetworkInterfaceLoop",
           "count": "[parameters('vmCount')]"
@@ -312,9 +268,6 @@
           "virtualNetworkExistingRGName": {
             "value": "[parameters('virtualNetworkExistingRGName')]"
           },
-          "MgmtPublicIPAddressName": {
-            "value": "[concat(parameters('MgmtPublicIPAddressName'), copyindex())]"
-          },
           "baseUrl": {
             "value": "[parameters('baseUrl')]"
           }
@@ -322,11 +275,10 @@
       }
     },
     {
-      "name": "[concat('VMSeries-Firewall-VM', copyindex())]",
+      "name": "[concat('VMSeries-Firewall-VM', copyindex(1))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "SettingUpPublicIPsLoop",
         "NetworkInterfaceLoop",
         "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
       ],
@@ -382,7 +334,7 @@
           },
           "BootstrapUriSizeGB": {
             "value": "[parameters('BootstrapUriSizeGB')]"
-          },
+          }
         }
       }
     }

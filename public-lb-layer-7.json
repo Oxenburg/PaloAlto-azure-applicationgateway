@@ -26,11 +26,10 @@
     "skuName": {
       "type": "string",
       "allowedValues": [
-        "Standard_Small",
-        "Standard_Medium",
-        "Standard_Large"
+        "Standard_v2",
+        "WAF_v2"
       ],
-      "defaultValue": "Standard_Medium",
+      "defaultValue": "Standard_v2",
       "metadata": {
         "description": "Sku Name"
       }
@@ -70,7 +69,7 @@
     "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]",
     "publicIPRef": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIPAddressName'))]",
     "applicationGatewayID": "[resourceId('Microsoft.Network/applicationGateways',variables('applicationGatewayName'))]",
-    "apiVersion": "2015-05-01-preview"
+    "apiVersion": "2023-09-01"
   },
   "resources": [
     {
@@ -78,8 +77,11 @@
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[parameters('publicIPAddressName')]",
       "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard"
+      },
       "properties": {
-        "publicIPAllocationMethod": "Dynamic"
+        "publicIPAllocationMethod": "Static"
       }
     },
     {
@@ -93,7 +95,7 @@
       "properties": {
         "sku": {
           "name": "[parameters('skuName')]",
-          "tier": "Standard",
+          "tier": "Standard_v2",
           "capacity": "[parameters('capacity')]"
         },
         "gatewayIPConfigurations": [
@@ -162,6 +164,7 @@
             "Name": "rule1",
             "properties": {
               "RuleType": "Basic",
+              "priority": 10,
               "httpListener": {
                 "id": "[concat(variables('applicationGatewayID'), '/httpListeners/appGatewayHttpListener')]"
               },

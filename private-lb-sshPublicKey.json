@@ -22,7 +22,7 @@
     },
     "subnetName": {
       "type": "string",
-      "defaultValue": "backendSubnet",
+      "defaultValue": "DMZSubnet",
       "metadata": {
         "description": "This is the name of the backend subnet"
       }
@@ -73,13 +73,6 @@
         "description": "Image SKU"
       }
     },
-    "vmNamePrefix": {
-      "type": "string",
-      "defaultValue": "backendWWW-",
-      "metadata": {
-        "description": "This is the prefix name for the virtual machines"
-      }
-    },
     "storageAccountName": {
       "type": "string",
       "metadata": {
@@ -93,7 +86,7 @@
          "Standard_D1",
          "Standard_D1_v2"
       ],
-      "defaultValue": "Standard_D1",
+      "defaultValue": "Standard_D1_v2",
       "metadata": {
         "description": "This is the allowed list of VM sizes"
       }
